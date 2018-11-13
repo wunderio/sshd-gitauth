@@ -2,6 +2,7 @@
 
 # Generate new SSH fingerprint
 ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa
+ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa 
 ssh-keygen -f /etc/ssh/ssh_host_ecdsa_key -N '' -t ecdsa
 ssh-keygen -f /etc/ssh/ssh_host_ed25519_key -N '' -t ed25519
 
@@ -35,7 +36,6 @@ if [[ -v GITAUTH_ORGANISATION && -v GITAUTH_API_TOKEN && -v GITAUTH_HOST ]]; the
     echo "gitauth-project: ${GITAUTH_PROJECT}" >> /etc/ssh/gitauth_keys.yaml
 fi
 
-env > /etc/environment
 addgroup www-admin
 # We add -D to make it non-interactive, but then the user is locked out.
 adduser www-admin -D -G www-admin -s /bin/bash -h /var/www/html
@@ -43,8 +43,8 @@ adduser www-admin -D -G www-admin -s /bin/bash -h /var/www/html
 echo "www-admin:" | chpasswd
 
 # Pass environment variables down to container, so SSH can pick it up and drush commands work too.
-mkdir ~www-admin/.ssh/
-env | grep -v HOME > ~www-admin/.ssh/environment
+mkdir ~www-admin/.ssh/ -p
+#env | grep -v HOME > ~www-admin/.ssh/environment
 
 # Put backup key
 # mkdir -p /root/.ssh
@@ -53,5 +53,5 @@ env | grep -v HOME > ~www-admin/.ssh/environment
 # chmod 600 /root/.ssh/authorized_keys
 
 # run SSH server
-/usr/sbin/sshd -D
+/usr/sbin/sshd -D -E /proc/self/fd/2
 
