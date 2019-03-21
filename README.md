@@ -4,6 +4,8 @@ This is a custom container that will authorize users based on their SSH private 
 
 You need to supply Github API Personal access token that will be used to get the list of organisation users. The access can be read only, following permissions are needed for the task: `repo`.
 
+Fingerprint keys are moved to a dedicated folder, `/etc/ssh/keys`, that can be mounted to a persistent storage. 
+
 # Configuration
 
 Provide following environment variables for the container

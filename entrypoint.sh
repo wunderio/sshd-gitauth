@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Generate new SSH fingerprint
-ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa
-ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa 
-ssh-keygen -f /etc/ssh/ssh_host_ecdsa_key -N '' -t ecdsa
-ssh-keygen -f /etc/ssh/ssh_host_ed25519_key -N '' -t ed25519
+ssh-keygen -f /etc/ssh/keys/ssh_host_rsa_key -N '' -t rsa
+ssh-keygen -f /etc/ssh/keys/ssh_host_dsa_key -N '' -t dsa 
+ssh-keygen -f /etc/ssh/keys/ssh_host_ecdsa_key -N '' -t ecdsa
+ssh-keygen -f /etc/ssh/keys/ssh_host_ed25519_key -N '' -t ed25519
 
 # SSHD settings
 sed -i 's/^PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config
@@ -12,6 +12,11 @@ sed -i 's/^#UseDNS .*/UseDNS no/' /etc/ssh/sshd_config
 sed -i 's/^#PrintMotd .*/PrintMotd no/' /etc/ssh/sshd_config
 sed -i 's/^#PermitUserEnvironment .*/PermitUserEnvironment yes/' /etc/ssh/sshd_config
 sed -i 's/^#ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
+
+sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_rsa_key/HostKey \/etc\/ssh\/keys\/ssh_host_rsa_key/' /etc/ssh/sshd_config
+sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_dsa_key/HostKey \/etc\/ssh\/keys\/ssh_host_dsa_key/' /etc/ssh/sshd_config
+sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_ecdsa_key/HostKey \/etc\/ssh\/keys\/ssh_host_ecdsa_key/' /etc/ssh/sshd_config
+sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_ed25519_key/HostKey \/etc\/ssh\/keys\/ssh_host_ed25519_key/' /etc/ssh/sshd_config
 
 # Check the $GITAUTH_REPOSITORY_URL variable
 if [[ -v GITAUTH_REPOSITORY_URL ]]; then
