@@ -18,28 +18,17 @@ sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_dsa_key/HostKey \/etc\/ssh\/keys\/ssh_h
 sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_ecdsa_key/HostKey \/etc\/ssh\/keys\/ssh_host_ecdsa_key/' /etc/ssh/sshd_config
 sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_ed25519_key/HostKey \/etc\/ssh\/keys\/ssh_host_ed25519_key/' /etc/ssh/sshd_config
 
-# Check the $GITAUTH_REPOSITORY_URL variable
-if [[ -v GITAUTH_REPOSITORY_URL ]]; then
-    # Extract auth repo url to variables
-    RE="^(https|git)(:\/\/|@)([^\/:]+)[\/:]([^\/:]+)\/(.+).git$"
-    if [[ $GITAUTH_REPOSITORY_URL =~ $RE ]]; then
-        GITAUTH_HOST=${BASH_REMATCH[3]}
-        GITAUTH_ORGANISATION=${BASH_REMATCH[4]}
-        GITAUTH_PROJECT=${BASH_REMATCH[5]}
-    fi
-fi
+sed -i 's/^#AuthorizedKeysCommandUser .*/AuthorizedKeysCommandUser nobody/' /etc/ssh/sshd_config
+sed -i 's/^#AuthorizedKeysCommand .*/AuthorizedKeysCommand \/etc\/ssh\/gitauth_keys.sh %f/' /etc/ssh/sshd_config
 
-if [[ -v GITAUTH_ORGANISATION && -v GITAUTH_API_TOKEN && -v GITAUTH_HOST ]]; then
-    # Use gitauth script only when we have at least the token, host and organisation variables defined
-    sed -i 's/^#AuthorizedKeysCommandUser .*/AuthorizedKeysCommandUser nobody/' /etc/ssh/sshd_config
-    sed -i 's/^#AuthorizedKeysCommand .*/AuthorizedKeysCommand \/etc\/ssh\/gitauth_keys.py/' /etc/ssh/sshd_config
-
-    # AuthorizedKeysCommand does not pass environment variables so we're storing them in config file
-    echo "gitauth-api-token: ${GITAUTH_API_TOKEN}" >> /etc/ssh/gitauth_keys.yaml
-    echo "gitauth-host: ${GITAUTH_HOST}" >> /etc/ssh/gitauth_keys.yaml
-    echo "gitauth-organisation: ${GITAUTH_ORGANISATION}" >> /etc/ssh/gitauth_keys.yaml
-    echo "gitauth-project: ${GITAUTH_PROJECT}" >> /etc/ssh/gitauth_keys.yaml
-fi
+# AuthorizedKeysCommand does not read environment variables, so we use them with `source`
+cat > /etc/ssh/gitauth_keys.env  << EOF
+GITAUTH_URL=${GITAUTH_URL}
+GITAUTH_SCOPE=${GITAUTH_SCOPE}
+GITAUTH_USERNAME=${GITAUTH_USERNAME}
+GITAUTH_PASSWORD=${GITAUTH_PASSWORD}
+OUTSIDE_COLLABORATORS=${OUTSIDE_COLLABORATORS}
+EOF
 
 addgroup www-admin
 # We add -D to make it non-interactive, but then the user is locked out.
@@ -50,12 +39,6 @@ echo "www-admin:" | chpasswd
 # Pass environment variables down to container, so SSH can pick it up and drush commands work too.
 mkdir ~www-admin/.ssh/ -p
 #env | grep -v HOME > ~www-admin/.ssh/environment
-
-# Put backup key
-# mkdir -p /root/.ssh
-# touch /root/.ssh/authorized_keys
-# echo "pubkey" > /root/.ssh/authorized_keys
-# chmod 600 /root/.ssh/authorized_keys
 
 # run SSH server
 /usr/sbin/sshd -D -E /proc/self/fd/2

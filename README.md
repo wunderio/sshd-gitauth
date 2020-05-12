@@ -1,19 +1,14 @@
 # About project
 
-This is a custom container that will authorize users based on their SSH private key. The key whitelist is built by listing all users that belong to a certain github organisation. 
+This is a custom container that will authorize users based on their SSH private key. The key whitelist is provided by [SSH public keys for silta](https://github.com/wunderio/silta-ssh-keys) project.
 
-You need to supply Github API Personal access token that will be used to get the list of organisation users. The access can be read only, following permissions are needed for the task: `repo`.
-
-Fingerprint keys are moved to a dedicated folder, `/etc/ssh/keys`, that can be mounted to a persistent storage. 
+Fingerprint keys are moved to a dedicated folder, `/etc/ssh/keys`, that can be mounted to a persistent storage.
 
 # Configuration
 
-Provide following environment variables for the container
- - GITAUTH_API_TOKEN
- - GITAUTH_REPOSITORY_URL
- - GITAUTH_HOST (optional if `GITAUTH_REPOSITORY_URL` is defined) 
- - GITAUTH_ORGANISATION (optional if `GITAUTH_REPOSITORY_URL` is defined)
-
-# Caching
-
-To make the login process faster, the script does cache the member list for 1 hour and user keys for 24 hours.
+Provide following environment variables for the container:
+ - GITAUTH_URL: Endpoint providing ssh key list. f.ex. https://example.com/api/1/git-ssh-keys
+ - GITAUTH_SCOPE: Scope you want to use for authorisation. f.ex. `https://github.com/organisation` or `git@github.com:organisation/reponame.git` for getting public keys of all `reponame` repository collaborators. 
+ - GITAUTH_USERNAME: Key server credentials
+ - GITAUTH_PASSWORD: Key server credentials
+ - OUTSIDE_COLLABORATORS: Include outside collaborators f.ex. "true".
