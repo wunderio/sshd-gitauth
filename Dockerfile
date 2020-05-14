@@ -10,4 +10,4 @@ RUN mkdir /etc/ssh/keys
 COPY gitauth_keys.sh /etc/ssh/
 COPY entrypoint.sh /
 
-CMD ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

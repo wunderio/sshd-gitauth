@@ -41,5 +41,5 @@ mkdir ~www-admin/.ssh/ -p
 #env | grep -v HOME > ~www-admin/.ssh/environment
 
 # run SSH server
-/usr/sbin/sshd -D -E /proc/self/fd/2
+exec /usr/sbin/sshd -D -E /proc/self/fd/2
 
