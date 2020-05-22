@@ -12,6 +12,7 @@ sed -i 's/^#UseDNS .*/UseDNS no/' /etc/ssh/sshd_config
 sed -i 's/^#PrintMotd .*/PrintMotd no/' /etc/ssh/sshd_config
 sed -i 's/^#PermitUserEnvironment .*/PermitUserEnvironment yes/' /etc/ssh/sshd_config
 sed -i 's/^#ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
+sed -i 's/^#AllowTcpForwarding .*/AllowTcpForwarding yes/' /etc/ssh/sshd_config
 
 sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_rsa_key/HostKey \/etc\/ssh\/keys\/ssh_host_rsa_key/' /etc/ssh/sshd_config
 sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_dsa_key/HostKey \/etc\/ssh\/keys\/ssh_host_dsa_key/' /etc/ssh/sshd_config
