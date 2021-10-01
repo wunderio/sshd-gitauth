@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3.9
 
 USER root
 RUN apk add --no-cache openssh bash curl
