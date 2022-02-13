@@ -12,7 +12,10 @@ sed -i 's/^#UseDNS .*/UseDNS no/' /etc/ssh/sshd_config
 sed -i 's/^#PrintMotd .*/PrintMotd no/' /etc/ssh/sshd_config
 sed -i 's/^#PermitUserEnvironment .*/PermitUserEnvironment yes/' /etc/ssh/sshd_config
 sed -i 's/^#ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
+sed -i 's/^#ClientAliveInterval .*/ClientAliveInterval 120/' /etc/ssh/sshd_config
+sed -i 's/^#ClientAliveCountMax .*/ClientAliveCountMax 30/' /etc/ssh/sshd_config
 sed -i 's/^AllowTcpForwarding .*/AllowTcpForwarding yes/' /etc/ssh/sshd_config
+sed -i 's/^#PermitTunnel .*/PermitTunnel yes/' /etc/ssh/sshd_config
 
 sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_rsa_key/HostKey \/etc\/ssh\/keys\/ssh_host_rsa_key/' /etc/ssh/sshd_config
 sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_dsa_key/HostKey \/etc\/ssh\/keys\/ssh_host_dsa_key/' /etc/ssh/sshd_config
@@ -23,6 +26,7 @@ sed -i 's/^#AuthorizedKeysCommandUser .*/AuthorizedKeysCommandUser nobody/' /etc
 sed -i 's/^#AuthorizedKeysCommand .*/AuthorizedKeysCommand \/etc\/ssh\/gitauth_keys.sh %f/' /etc/ssh/sshd_config
 
 # AuthorizedKeysCommand does not read environment variables, so we use them with `source`
+if [[ -n ${GITAUTH_URL} ]]; then
 cat > /etc/ssh/gitauth_keys.env  << EOF
 GITAUTH_URL=${GITAUTH_URL}
 GITAUTH_SCOPE=${GITAUTH_SCOPE}
@@ -30,6 +34,7 @@ GITAUTH_USERNAME=${GITAUTH_USERNAME}
 GITAUTH_PASSWORD=${GITAUTH_PASSWORD}
 OUTSIDE_COLLABORATORS=${OUTSIDE_COLLABORATORS}
 EOF
+fi
 
 addgroup www-admin
 # We add -D to make it non-interactive, but then the user is locked out.
