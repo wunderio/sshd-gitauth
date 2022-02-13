@@ -3,4 +3,10 @@
 # AuthorizedKeysCommand does not have environment variables, so we use them with `source`
 source "${0%/*}/gitauth_keys.env"
 
+# Include static keys if present
+if [ -f "${0%/*}/authorized_keys" ]; then
+cat "${0%/*}/authorized_keys"
+fi
+
+# Request keys from keyserver
 echo "$(curl -s -u ${GITAUTH_USERNAME}:${GITAUTH_PASSWORD} ${GITAUTH_URL}\?scope=${GITAUTH_SCOPE}\&outside_collaborators=${OUTSIDE_COLLABORATORS}\&fingerprint=${1})"
