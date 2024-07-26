@@ -10,12 +10,12 @@ ssh-keygen -f /etc/ssh/keys/ssh_host_ed25519_key -N '' -t ed25519
 sed -i 's/^PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config
 sed -i 's/^#UseDNS .*/UseDNS no/' /etc/ssh/sshd_config
 sed -i 's/^#PrintMotd .*/PrintMotd no/' /etc/ssh/sshd_config
-sed -i 's/^#PermitUserEnvironment .*/PermitUserEnvironment yes/' /etc/ssh/sshd_config
+sed -i 's/^#PermitUserEnvironment .*/PermitUserEnvironment no/' /etc/ssh/sshd_config
 sed -i 's/^#ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
 sed -i 's/^#ClientAliveInterval .*/ClientAliveInterval 120/' /etc/ssh/sshd_config
 sed -i 's/^#ClientAliveCountMax .*/ClientAliveCountMax 30/' /etc/ssh/sshd_config
 sed -i 's/^AllowTcpForwarding .*/AllowTcpForwarding yes/' /etc/ssh/sshd_config
-sed -i 's/^#PermitTunnel .*/PermitTunnel yes/' /etc/ssh/sshd_config
+sed -i 's/^#PermitTunnel .*/PermitTunnel no/' /etc/ssh/sshd_config
 
 sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_rsa_key/HostKey \/etc\/ssh\/keys\/ssh_host_rsa_key/' /etc/ssh/sshd_config
 sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_dsa_key/HostKey \/etc\/ssh\/keys\/ssh_host_dsa_key/' /etc/ssh/sshd_config
@@ -38,7 +38,7 @@ fi
 
 addgroup www-admin
 # We add -D to make it non-interactive, but then the user is locked out.
-adduser www-admin -D -G www-admin -s /bin/bash -h /var/www/html
+adduser www-admin -D -G www-admin -s /bin/false -h /var/www/html
 # So set an empty password after the user is created.
 echo "www-admin:" | chpasswd
 
