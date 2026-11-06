@@ -1,6 +1,9 @@
 FROM alpine:3.24.4
 
 USER root
+
+RUN apk upgrade --no-cache
+
 # Minimum versions fix the password authentication bypass (Alpine advisory 2026-11-05)
 RUN apk add --no-cache 'openssh>=10.3_p1-r2' 'openssh-server>=10.3_p1-r2' bash curl
 EXPOSE 22
